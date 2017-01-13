@@ -15,6 +15,8 @@ import com.google.android.gms.maps.model.MarkerOptions;
 
 import com.google.android.gms.maps.GoogleMap.OnMapLongClickListener;
 import com.google.android.gms.maps.GoogleMap.OnMapClickListener;
+import com.google.android.gms.maps.model.Polyline;
+import com.google.android.gms.maps.model.PolylineOptions;
 
 // Posicionamiento
 import android.location.Location;
@@ -24,6 +26,8 @@ import android.location.Geocoder;
 
 import android.view.View;
 import android.widget.Toast;
+
+import java.util.ArrayList;
 
 public class MapsActivity extends FragmentActivity implements OnMapReadyCallback {
 
@@ -42,6 +46,8 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     // tipo de mapa
     private int tipomapa = 0;
 
+    private ArrayList<LatLng> marcadores;
+
     SupportMapFragment mapFragment;
 
     @Override
@@ -50,12 +56,12 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         setContentView(R.layout.activity_main);
 
         obtenerPosicion();
+        marcadores = new ArrayList<LatLng>();
 
         // Obtain the SupportMapFragment and get notified when the map is ready to be used.
         mapFragment = (SupportMapFragment) getSupportFragmentManager().findFragmentById(R.id.map);
         mapFragment.getMapAsync(this);
     }
-
 
     /**
      * Manipulates the map once available.
@@ -84,8 +90,23 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         mapFragment.getMap().setOnMapClickListener(new OnMapClickListener() {
             @Override
             public void onMapClick(LatLng posicion) {
-                mMap.addMarker(new MarkerOptions().position(posicion).title("Marcador creado con onMapClick"));
+
+                if(marcadores.size() == 3){
+                    mMap.clear();
+                    marcadores.clear();
+                }else{
+                    marcadores.add(posicion);
+                    mMap.addMarker(new MarkerOptions().position(posicion).title("Marcador " + marcadores.size()));
+                    if(marcadores.size() == 3){
+                        PolylineOptions polylineOptions = new PolylineOptions();
+                        for(int i=0; i<3; i++){
+                            polylineOptions.add(marcadores.get(i));
+                        }
+                        mMap.addPolyline(polylineOptions);
+                    }
+                }
             }
+
         });
         mMap.setOnMapLongClickListener(new OnMapLongClickListener() {
             @Override
