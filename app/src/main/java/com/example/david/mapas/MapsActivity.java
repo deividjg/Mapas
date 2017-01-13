@@ -90,7 +90,6 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         mapFragment.getMap().setOnMapClickListener(new OnMapClickListener() {
             @Override
             public void onMapClick(LatLng posicion) {
-
                 if(marcadores.size() == 3){
                     mMap.clear();
                     marcadores.clear();
@@ -103,6 +102,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                             polylineOptions.add(marcadores.get(i));
                         }
                         mMap.addPolyline(polylineOptions);
+                        mostrarDistancia();
                     }
                 }
             }
@@ -119,6 +119,13 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         LatLng sydney = new LatLng(-34, 151);
         mMap.addMarker(new MarkerOptions().position(sydney).title("Marker in Sydney"));
         mMap.moveCamera(CameraUpdateFactory.newLatLng(sydney));
+    }
+
+    private void mostrarDistancia() {
+        double distancia1 = SphericalUtil.computeDistanceBetween(marcadores.get(0), marcadores.get(1));
+        double distancia2 = SphericalUtil.computeDistanceBetween(marcadores.get(1), marcadores.get(2));
+        double distancia = (distancia1 + distancia2)/1000;
+        Toast.makeText(getApplicationContext(), "Recorrido total : " + distancia + " km", Toast.LENGTH_LONG).show();
     }
 
     private void obtenerPosicion() {
